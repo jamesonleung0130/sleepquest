@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0e1630">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>睡得好，做得好：三夜好眠挑戰｜遊戲介紹</title>
+<meta name="description" content="以 TTM 跨理論模型設計的睡眠健康教育卡牌遊戲：設計用意、玩法、卡牌樣式與線上試玩。NUR401 小組專題。">
+<style>
+:root{--navy:#0e1630;--navy2:#1a2249;--cream:#f6f3ea;--muted:#9aa6c8;
+  --action:#3DDC97;--skill:#A78BFA;--myth:#F5B450;--disrupt:#F0705A;--maintain:#5BB8E8}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--navy);color:var(--cream);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC","Microsoft JhengHei",sans-serif}
+body{background:radial-gradient(120% 70% at 50% 0%,#1d2657 0%,#0e1630 52%,#080d1f 100%) fixed;line-height:1.7}
+.wrap{max-width:720px;margin:0 auto;padding:0 20px 60px}
+a{color:#9ec8ff}
+.nav{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:12px;
+  padding:12px 20px;background:rgba(10,15,33,.9);backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(255,255,255,.08);margin:0 -20px 0}
+.nav b{font-size:14px;letter-spacing:.5px}
+.nav .cta{margin-left:auto;background:var(--cream);color:#0b1020;border-radius:999px;
+  padding:9px 18px;font-size:13.5px;font-weight:800;text-decoration:none;white-space:nowrap}
+.hero{text-align:center;padding:38px 0 10px}
+.hero .moon{width:78px;height:78px;margin:0 auto 16px;position:relative}
+.hero .moon:before{content:"";position:absolute;inset:0;border-radius:50%;background:var(--cream);
+  box-shadow:0 0 54px rgba(246,243,234,.32)}
+.hero .moon:after{content:"";position:absolute;width:100%;height:100%;border-radius:50%;
+  background:#101838;left:25%;top:-8%}
+h1{font-size:27px;line-height:1.3;margin:0 0 6px;letter-spacing:.5px}
+.sub{color:#c9d2ee;font-size:13.5px;letter-spacing:1.5px;margin-bottom:18px}
+.lead{font-size:15.5px;color:#dfe4f2;text-align:left;background:rgba(255,255,255,.05);
+  border-left:3px solid var(--skill);border-radius:12px;padding:14px 16px;margin:6px 0 6px}
+h2{font-size:20px;margin:38px 0 4px;letter-spacing:.5px}
+h2 .n{color:var(--skill);font-size:13px;letter-spacing:2px;display:block;margin-bottom:4px;font-weight:600}
+h3{font-size:15.5px;margin:22px 0 6px;color:#fff}
+p{font-size:14.8px;color:#dfe4f2;margin:10px 0}
+ul{padding-left:20px;margin:8px 0}
+li{font-size:14.5px;color:#dfe4f2;margin:6px 0}
+.card-why{background:rgba(255,255,255,.05);border-radius:16px;padding:16px 18px;margin:12px 0;
+  border:1px solid rgba(255,255,255,.08)}
+.card-why b{display:block;font-size:15.5px;margin-bottom:6px;color:#fff}
+.card-why p{margin:0;font-size:14px;color:#cbd3e9}
+.steps{counter-reset:s;margin:14px 0}
+.step{display:flex;gap:14px;padding:13px 0;border-bottom:1px dashed rgba(255,255,255,.12)}
+.step:last-child{border:0}
+.step i{flex:0 0 30px;height:30px;border-radius:50%;background:var(--cream);color:#0b1020;
+  font-style:normal;font-weight:800;display:grid;place-items:center;font-size:14px}
+.step div{font-size:14.5px}
+.step span{display:block;color:var(--muted);font-size:13px}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin:14px 0;
+  background:rgba(255,255,255,.03);border-radius:12px;overflow:hidden}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.08);vertical-align:top}
+th{color:#cfd8f2;font-weight:700;font-size:12.5px;background:rgba(255,255,255,.05)}
+td b{color:#fff}
+/* mini cards */
+.cards{display:grid;grid-template-columns:1fr;gap:14px;margin:16px 0}
+@media(min-width:560px){.cards{grid-template-columns:1fr 1fr}}
+.card{border-radius:18px;overflow:hidden;background:linear-gradient(180deg,#18203f,#141a33);
+  border:1px solid rgba(255,255,255,.09);box-shadow:0 10px 26px rgba(0,0,0,.35)}
+.card .band{display:flex;align-items:center;gap:8px;padding:9px 13px;font-weight:800;color:#0b1020;font-size:14px}
+.card .band .en{font-size:9.5px;letter-spacing:1.4px;opacity:.7}
+.card .band .pts{margin-left:auto;background:#fff;border-radius:999px;min-width:30px;height:30px;
+  display:grid;place-items:center;font-size:13px;font-weight:800}
+.card .body{padding:14px}
+.card .t{font-size:16px;font-weight:800;line-height:1.4;margin:0 0 8px;color:#fff}
+.card .e{font-size:13px;color:#dfe4f2;margin:0 0 10px;line-height:1.6}
+.card .w{background:rgba(255,255,255,.05);border-radius:11px;padding:10px;font-size:12px;color:#c8d1e8;line-height:1.6}
+.card .w b{display:block;font-size:11px;letter-spacing:1px;opacity:.75;margin-bottom:4px}
+.card .hint{font-size:11.5px;color:var(--muted);margin-top:8px}
+.ans{display:inline-block;font-size:11px;font-weight:800;padding:4px 10px;border-radius:999px;color:#0b1020}
+.cycles{display:flex;gap:6px;margin-top:10px}
+.cycles i{width:11px;height:11px;border-radius:50%;border:2px solid rgba(255,255,255,.22)}
+.cycles i.on{border-color:transparent}
+.btn{display:block;width:100%;text-align:center;text-decoration:none;border:0;border-radius:16px;
+  padding:16px;font-size:16.5px;font-weight:800;background:var(--cream);color:#0b1020;margin:16px 0;
+  box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.btn.ghost{background:transparent;color:var(--cream);border:1.5px solid rgba(246,243,234,.28);box-shadow:none}
+.tags{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+.tag{font-size:12px;padding:6px 12px;border-radius:999px;border:1px solid rgba(246,243,234,.22);color:#cfd7f0}
+footer{margin-top:44px;padding-top:18px;border-top:1px solid rgba(255,255,255,.1);font-size:12px;color:var(--muted)}
+.note{font-size:12.5px;color:var(--muted);background:rgba(255,255,255,.04);border-radius:12px;padding:12px 14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="nav">
+  <b>睡得好，做得好</b>
+  <a class="cta" href="play.html">立即試玩 →</a>
+</div>
+
+<section class="hero">
+  <div class="moon"></div>
+  <h1>睡得好，做得好<br>三夜好眠挑戰</h1>
+  <div class="sub">SLEEP WELL, WORK WELL · A TTM-BASED CARD GAME</div>
+  <div class="tags">
+    <span class="tag">TTM 跨理論模型</span>
+    <span class="tag">3–6 人 · 25 分鐘</span>
+    <span class="tag">54 張卡牌</span>
+    <span class="tag">手機＋實體兩用</span>
+  </div>
+  <p style="font-size:13px;color:#9aa6c8;margin:2px 0 0">📶 任何網絡都開得：4G／5G、校園 WiFi、屋企 WiFi 都可以，<b style="color:#dfe4f2">毋須與任何電腦連同一個網絡</b>。</p>
+</section>
+
+<p class="lead">一套用卡牌玩的睡眠健康教育遊戲。三個「夜晚」對應行為改變的三個階段：<b>先打破迷思，再動手練習，最後準備復發</b>。玩家在 25 分鐘內完成知識更新、技能演練與復發預防，離場時帶走三項自己寫下的睡前承諾。</p>
+
+<h2><span class="n">01 · 為什麼是卡牌</span>設計用意</h2>
+<p>在職青年不缺睡眠資訊，缺的是「關我事」的感覺。單向講座講得再準，參加者離場十分鐘就忘記；卡牌把抽象的理論變成桌上可觸摸的選擇、風險與後果。</p>
+
+<div class="card-why">
+  <b>① 把 TTM 的三個階段變成三個夜晚</b>
+  <p>第 1 夜全是迷思卡，用「真的還是假的」打斷「睡得少沒關係」的假設（未考慮期→沉思期）；第 2 夜技能卡最多，全桌即場做 30 秒放鬆練習，建立替代滑手機的入睡方法（準備期→行動期）；第 3 夜干擾最強，用維持卡演練復發怎麼辦（維持期）。</p>
+</div>
+<div class="card-why">
+  <b>② 合作而不是競爭</b>
+  <p>勝利條件是「全隊平均 ≥8 分」，不是踩低別人。技能卡要求全桌一起做，答對迷思全桌加分——把同儕由比較對象變成支持網絡（SCT 的觀察學習與自我效能）。</p>
+</div>
+<div class="card-why">
+  <b>③ 遊戲本身就是評估工具</b>
+  <p>迷思卡即場產生知識正確率、技能卡即場產生技能示範記錄，配合內建前測／後測問卷，活動當日就能交出過程與影響評估的數據，不必事後補做。</p>
+</div>
+
+<h2><span class="n">02 · 怎麼玩</span>規則 60 秒讀完</h2>
+<div class="steps">
+  <div class="step"><i>1</i><div>每夜開始，主持人翻開一張「干擾卡」<span>例：加班到 23:30、群組半夜 @所有人 —— 全桌 -1 分</span></div></div>
+  <div class="step"><i>2</i><div>輪到你：抽 2 張、打出 1 張<span>行動卡 +2 分；技能卡全桌做 30 秒 +1 分及 1 顆星；維持卡抵消干擾或 +2 分</span></div></div>
+  <div class="step"><i>3</i><div>迷思卡：全桌先舉「對／錯」判斷卡<span>答對每人 +1 分，主持人唸出解釋 —— 這裡是知識真正進腦袋的地方</span></div></div>
+  <div class="step"><i>4</i><div>三夜後結算，寫下三項睡前承諾<span>睡眠分 ≥10 且 ≥2 顆星＝好眠達人；全隊平均 ≥8 分＝團隊通關</span></div></div>
+</div>
+
+<table>
+  <tr><th>牌類</th><th>張數</th><th>作用</th><th>對應學習領域</th></tr>
+  <tr><td><b>行動卡</b></td><td>14</td><td>睡前好習慣，打出即得分</td><td>Cognitive</td></tr>
+  <tr><td><b>技能卡</b></td><td>10</td><td>全桌一起做 30 秒放鬆練習</td><td>Psychomotor</td></tr>
+  <tr><td><b>迷思卡</b></td><td>16</td><td>真假判斷，當場破解 12 個迷思</td><td>Cognitive</td></tr>
+  <tr><td><b>干擾卡</b></td><td>8</td><td>夜晚事件，製造風險與討論</td><td>Affective</td></tr>
+  <tr><td><b>維持卡</b></td><td>6</td><td>復發預防腳本</td><td>Affective + Cognitive</td></tr>
+</table>
+
+<h2><span class="n">03 · 卡牌樣式</span>五類牌，一眼認得出</h2>
+<p>每張卡只有一個訊息：標題、一句效果、一句「為什麼？」。牌類同時用顏色、圖示與中英文標籤區分，色弱玩家也讀得到；字級換算打印後 ≥14 pt，深藍底配低飽和點綴，符合睡前低刺激的視覺要求。</p>
+<div class="cards" id="showcase"></div>
+
+<h2><span class="n">04 · 三夜結構</span>對應 TTM 階段</h2>
+<table>
+  <tr><th>夜晚</th><th>TTM 階段</th><th>重點牌</th><th>教學目的</th></tr>
+  <tr><td><b>第 1 夜</b></td><td>未考慮期 → 沉思期</td><td>迷思卡</td><td>打破迷思、建立危機意識與行為意圖</td></tr>
+  <tr><td><b>第 2 夜</b></td><td>準備期 → 行動期</td><td>技能卡</td><td>即場練習，建立自我效能</td></tr>
+  <tr><td><b>第 3 夜</b></td><td>維持期</td><td>維持卡＋干擾卡</td><td>復發預防、同儕支持</td></tr>
+</table>
+
+<h2><span class="n">05 · 學習目標</span>四類目標，都可量度</h2>
+<table>
+  <tr><th>目標</th><th>指標</th></tr>
+  <tr><td><b>知識</b></td><td>70% 參加者 6 題知識測驗達 ≥5 題；全體答對率較基線升 ≥30 個百分點</td></tr>
+  <tr><td><b>技能</b></td><td>70% 能即場正確示範 ≥1 種放鬆技巧（4-7-8 呼吸或漸進式肌肉放鬆）</td></tr>
+  <tr><td><b>態度／自我效能</b></td><td>60% 表示有信心未來 1 個月每週 ≥5 天睡前 1 小時停用屏幕</td></tr>
+  <tr><td><b>行為</b></td><td>3 個月後 40% 平均每晚睡眠增加 ≥30 分鐘</td></tr>
+</table>
+
+<h2><span class="n">06 · 教材包</span>一套帶去課室就能用</h2>
+<ul>
+  <li>54 張卡牌（A4 打印版，含裁切線）＋ 6 張睡眠週期板 ＋ 判斷卡 ＋ 快速規則卡</li>
+  <li>線上版：三夜挑戰、迷思快問快答（投影大屏用）、前測／後測問卷（12 題、2 分鐘；需登入後台才可匯出）</li>
+  <li>主持手冊：25 分鐘逐分鐘腳本、話術、疑難排解、當日資料收集清單</li>
+  <li>設計說明書：理論對應表、可測量目標、實施與評估計畫、參考文獻</li>
+  <li><b>遊戲設計書（14 頁 PDF）</b>：逐類牌展示卡面、解釋每個設計決定、印刷規格與色票 → <a href="design-book.pdf">下載</a></li>
+  <li>線上版托管在公開網域，<b>任何網絡都開得</b>，不需要與主持人的電腦連同一個 WiFi；現場沒有網絡亦可改用實體卡牌</li>
+</ul>
+
+<a class="btn" href="play.html">立即在手機試玩 →</a>
+<p style="font-size:12.5px;color:#9aa6c8;text-align:center;margin:-8px 0 8px">
+  毋須下載、毋須註冊。手機、平板、電腦任何一部都開得，用自己嘅數據都玩到。
+</p>
+<a class="btn ghost" href="design-book.pdf" download>⬇ 下載設計書 PDF（14 頁，逐張卡解釋設計理由）</a>
+<a class="btn ghost" href="play.html#about">玩法與資料來源</a>
+
+<h2><span class="n">07 · 關於</span>課程與聲明</h2>
+<p>本遊戲為香港聖方濟各大學（Saint Francis University）護理系 <b>NUR401 Aspects of Health Promotion</b> 小組專題作業，以小組報告大綱的 TTM 跨理論模型為設計核心。</p>
+<div class="note">
+  本活動屬一般健康教育資訊，<b>不構成醫療建議，亦不取代專業診斷</b>。參與自願、可隨時中止；不收集姓名、電話或身份證等可識別個人資料，前後測以匿名碼配對。如有持續失眠、打呼伴日間嗜睡等情況，請諮詢醫護人員。<br><br>
+  睡眠內容依據：AASM &amp; SRS (2015)、Chang et al. (2015, <i>PNAS</i>)、Drake et al. (2013)、Irish et al. (2015)、Qaseem et al. (2016)。<br>
+  教學設計依據：NUR401 L1（學習領域與教學輔助工具）、L3（健康促進模型與成人學習原則）、WS3–WS5（評估與實施清單）。
+</div>
+
+<footer>
+  睡得好，做得好：三夜好眠挑戰 · v1.0 · NUR401 健康教育活動教材 · 本頁可自由轉發給同學與老師
+</footer>
+</div>
+
+<script>
+const SHOWCASE = [{"id":"A02","type":"action","title":"睡前 60 分鐘關螢幕","effect":"睡前一小時停用手機、平板、電腦","why":"屏幕藍光抑制褪黑素，令入睡延後、REM 減少","points":2,"tags":["藍光"]},{"id":"S01","type":"skill","title":"4-7-8 呼吸","effect":"全桌一起做：吸 4 秒、憋 7 秒、呼 8 秒，重複 4 次","why":"延長呼氣啟動副交感神經，降低心率與警覺","points":1,"seconds":40,"script":"吸氣 4…憋住 7…慢慢呼 8…再來一次"},{"id":"M01","type":"myth","stmt":"睡前飲一杯酒，可以幫助入睡","answer":false,"explain":"酒精只縮短入睡時間，卻抑制 REM、令後半夜易醒，整體睡眠質素更差。","points":1},{"id":"D02","type":"disrupt","title":"工作群組半夜 @所有人","effect":"本夜所有玩家 -1 分","why":"通知聲引發警覺與「檢查一下」的連鎖反應","points":1,"counter":["A03","A02"]},{"id":"T05","type":"maintain","title":"復發不等於失敗","effect":"一晚睡差，翌日照常起床，不報復性補眠","why":"復發是行為改變的常態，回到軌道比自責重要","points":2}];
+const TYPE = {"action":["行動卡","ACTION","#3DDC97"],"skill":["技能卡","SKILL","#A78BFA"],
+  "myth":["迷思卡","MYTH-BUSTER","#F5B450"],"disrupt":["干擾卡","DISRUPTOR","#F0705A"],
+  "maintain":["維持卡","MAINTAIN","#5BB8E8"]};
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function cardHTML(c){
+  const [label,en,col] = TYPE[c.type];
+  const pts = c.points ?? 2;
+  let inner;
+  if(c.type==='myth'){
+    inner = `<div class="t">「${esc(c.stmt)}」</div>
+      <div class="hint">全桌舉「對／錯」判斷卡 · 答對 +1 分</div>
+      <div class="w" style="margin-top:10px"><b>答案</b>
+        <span class="ans" style="background:${c.answer?'#63c896':'#f0866e'}">${c.answer?'對':'錯'}</span>
+        <div style="margin-top:8px">${esc(c.explain)}</div></div>`;
+  }else{
+    inner = `<div class="t">${esc(c.title)}</div>
+      <div class="e">${esc(c.effect)}</div>
+      <div class="w"><b>為什麼？</b>${esc(c.why||c.explain)}</div>`;
+  }
+  const on = Math.min(2,pts);
+  return `<div class="card" style="border-color:${col}44">
+    <div class="band" style="background:${col}"><span>${label}</span><span class="en">${en}</span><span class="pts">+${pts}</span></div>
+    <div class="body">${inner}
+      <div class="cycles">${[0,1,2,3,4].map(i=>`<i class="${i<on?'on':''}" style="${i<on?`background:${col}`:''}"></i>`).join('')}</div>
+    </div></div>`;
+}
+document.getElementById('showcase').innerHTML = SHOWCASE.map(cardHTML).join('');
+</script>
+</body>
+</html>
