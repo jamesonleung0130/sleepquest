@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0e1630">
+<title>後台 · 睡得好，做得好</title>
+<style>
+:root{--navy:#0e1630;--navy2:#1a2249;--cream:#f6f3ea;--muted:#8b95b5;--line:rgba(255,255,255,.1);
+  --ok:#3DDC97;--warn:#F5B450;--bad:#F0705A;--acc:#A78BFA}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--navy);color:var(--cream);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC","Microsoft JhengHei",sans-serif}
+body{background:radial-gradient(120% 70% at 50% 0%,#1c2554 0%,#0e1630 55%,#080d1f 100%) fixed;min-height:100vh}
+.wrap{max-width:760px;margin:0 auto;padding:16px 14px calc(30px + env(safe-area-inset-bottom))}
+.hidden{display:none!important}
+h1{font-size:20px;margin:6px 0 2px}
+h2{font-size:15px;margin:22px 0 8px;color:#cfd7ee;letter-spacing:.5px}
+small,.muted{color:var(--muted);font-size:12px;line-height:1.6}
+.btn{display:block;width:100%;border:0;border-radius:14px;padding:14px 16px;font-size:15px;font-weight:700;
+  color:#0b1020;background:var(--cream);margin:9px 0;cursor:pointer;font-family:inherit}
+.btn.ghost{background:transparent;color:var(--cream);border:1.5px solid rgba(246,243,234,.25)}
+.btn.acc{background:var(--acc);color:#0f1020}
+.btn.sm{padding:9px 12px;font-size:13px;width:auto;display:inline-block;margin:4px 6px 4px 0;border-radius:10px}
+.btn:active{transform:scale(.985)}
+input,select{width:100%;padding:12px;border-radius:12px;font-size:15px;font-family:inherit;
+  border:1.5px solid rgba(246,243,234,.2);background:rgba(255,255,255,.05);color:var(--cream);margin:6px 0}
+label{font-size:12.5px;color:#cfd7ee;display:block;margin-top:10px}
+.top{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.top .who{margin-left:auto;font-size:12px;color:var(--muted);text-align:right;line-height:1.4}
+.card{background:rgba(255,255,255,.045);border:1px solid var(--line);border-radius:16px;padding:14px;margin:10px 0}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.kpi{background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:14px;padding:12px}
+.kpi .n{font-size:26px;font-weight:800;letter-spacing:.5px}
+.kpi .l{font-size:11.5px;color:var(--muted);margin-top:2px}
+.tabs{display:flex;gap:6px;margin:14px 0 4px;overflow:auto}
+.tabs button{flex:1;min-width:88px;padding:10px 8px;border-radius:12px;border:1px solid var(--line);
+  background:transparent;color:var(--cream);font-size:13.5px;font-family:inherit;font-weight:600}
+.tabs button.on{background:var(--cream);color:#0b1020;border-color:var(--cream)}
+.row{display:flex;gap:8px;align-items:center}
+.pill{display:inline-block;font-size:11px;padding:3px 9px;border-radius:99px;background:rgba(255,255,255,.1);margin-right:4px}
+.pill.ok{background:rgba(61,220,151,.18);color:#9ff0c8}
+.pill.warn{background:rgba(245,180,80,.18);color:#ffd79a}
+.pill.bad{background:rgba(240,112,90,.18);color:#ffb1a3}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:8px}
+th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:600;font-size:11px}
+.bar{height:8px;border-radius:99px;background:rgba(255,255,255,.12);overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:var(--acc)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:22px;background:rgba(246,243,234,.96);
+  color:#0b1020;padding:11px 18px;border-radius:99px;font-weight:700;font-size:13.5px;z-index:99;opacity:0;transition:.2s}
+.toast.on{opacity:1;bottom:32px}
+.detail{background:rgba(0,0,0,.25);border-radius:12px;padding:10px;margin-top:8px;font-size:12px;line-height:1.7}
+.detail b{color:#fff}
+.gate{max-width:420px;margin:12vh auto 0}
+.foot{margin-top:24px;border-top:1px solid var(--line);padding-top:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ===== 首次設定 ===== -->
+<section id="setup" class="hidden">
+  <div class="gate">
+    <h1>建立主管理員</h1>
+    <p class="muted">第一次使用，請為自己設定帳號密碼。這組帳號可以建立其他帳號、分配權限、匯出資料。</p>
+    <div class="card">
+      <label>帳號</label><input id="suName" placeholder="例如 raphaela" autocomplete="username">
+      <label>密碼（至少 8 字元）</label><input id="suPass" type="password" autocomplete="new-password">
+      <label>再輸入一次</label><input id="suPass2" type="password" autocomplete="new-password">
+      <button class="btn acc" onclick="A.setup()">建立並登入</button>
+      <small>密碼以 scrypt 加鹽雜湊儲存，不存明文。忘記密碼只能清除資料庫重建。</small>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 登入 ===== -->
+<section id="login" class="hidden">
+  <div class="gate">
+    <h1>後台登入</h1>
+    <p class="muted">睡得好，做得好 · NUR401 資料後台</p>
+    <div class="card">
+      <label>帳號</label><input id="lgName" autocomplete="username">
+      <label>密碼</label><input id="lgPass" type="password" autocomplete="current-password">
+      <button class="btn" onclick="A.login()">登入</button>
+      <div id="lgErr" class="muted" style="color:#ffb1a3"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 後台 ===== -->
+<section id="dash" class="hidden">
+  <div class="top">
+    <div><h1>資料後台</h1><small id="whoLine">—</small></div>
+    <div class="who"><span id="roleTag" class="pill">—</span><br><a href="#" onclick="A.logout();return false" style="color:#9ec8ff">登出</a></div>
+  </div>
+
+  <div class="tabs">
+    <button id="t-overview" class="on" onclick="A.tab('overview')">概覽</button>
+    <button id="t-rows" onclick="A.tab('rows')">回應</button>
+    <button id="t-users" onclick="A.tab('users')">帳號</button>
+  </div>
+
+  <!-- 概覽 -->
+  <div id="pane-overview">
+    <div class="kpis" id="kpis"></div>
+    <div class="card">
+      <div class="row"><b style="font-size:13px">知識分佈（答對題數）</b></div>
+      <div id="dist"></div>
+    </div>
+    <div class="card">
+      <div class="row"><b style="font-size:13px">前測 → 後測（配對）</b></div>
+      <div id="paired" class="muted">—</div>
+    </div>
+    <div class="card">
+      <b style="font-size:13px">匯出</b>
+      <p class="muted" style="margin:6px 0">匯出需要管理員登入（你現在已登入）。</p>
+      <button class="btn ghost" onclick="A.exportCSV()">⬇ 匯出 CSV</button>
+      <button class="btn ghost" onclick="A.reload()">↻ 重新整理</button>
+    </div>
+  </div>
+
+  <!-- 回應 -->
+  <div id="pane-rows" class="hidden">
+    <div id="rowList"></div>
+  </div>
+
+  <!-- 帳號 -->
+  <div id="pane-users" class="hidden">
+    <div id="userList"></div>
+    <div class="card" id="addUserCard">
+      <b style="font-size:13px">新增帳號</b>
+      <label>帳號</label><input id="nuName" placeholder="例如 helper1">
+      <label>密碼（至少 8 字元）</label><input id="nuPass" type="password">
+      <label>權限</label>
+      <select id="nuRole">
+        <option value="viewer">檢視者：只看數據，不能匯出／刪除</option>
+        <option value="admin">管理員：可看、可匯出、可刪除回應</option>
+      </select>
+      <button class="btn acc" onclick="A.addUser()">建立帳號</button>
+    </div>
+  </div>
+
+  <div class="foot"><small>睡得好，做得好 · 後台 v1.0 · 資料只存於本伺服器</small></div>
+</section>
+
+<div class="toast" id="toast"></div>
+</div>
+
+<script>
+const SURVEY = {"version":"3.0-short","estimatedMinutes":2,"note":"短版：前測 12 題、後測 15 題，目標 2 分鐘內完成。完整版見 survey_long_v2.json。","sections":[{"id":"A","title":"背景","note":"不收集姓名、電話或學號","items":[{"id":"A1","type":"single","q":"你的年齡組別","opts":["18–24 歲","25–29 歲","30–35 歲","36 歲或以上"],"scored":false,"pre":true,"post":true}]},{"id":"B","title":"睡眠知識","note":"憑直覺答，不確定也可以選","items":[{"id":"B1","type":"single","q":"成人（18–64 歲）每晚建議睡多少小時？","opts":["4–5 小時","6–6.5 小時","7–9 小時","10–12 小時"],"correct":2,"scored":true,"scale":"knowledge","pre":true,"post":true},{"id":"B2","type":"single","q":"咖啡因在體內的半衰期大約是？","opts":["約 1 小時","約 2 小時","約 5–6 小時","約 12 小時以上"],"correct":2,"scored":true,"scale":"knowledge","pre":true,"post":true},{"id":"B3","type":"single","q":"睡前飲酒對睡眠的影響是？","opts":["加深深睡，睡得更好","快點入睡，但破壞後半夜睡眠","完全沒有影響","只影響做夢內容"],"correct":1,"scored":true,"scale":"knowledge","pre":true,"post":true},{"id":"B4","type":"single","q":"躺床後多久仍睡不著，應該起身離開床？","opts":["5 分鐘","20 分鐘","1 小時","整晚都要躺著"],"correct":1,"scored":true,"scale":"knowledge","pre":true,"post":true},{"id":"B5","type":"single","q":"打呼很大聲，同時日間非常疲倦，最應該？","opts":["不用理，代表睡得深","換個枕頭就會好","盡快求醫評估睡眠窒息","睡前喝酒幫助放鬆"],"correct":2,"scored":true,"scale":"knowledge","pre":true,"post":true},{"id":"B6","type":"single","q":"早上接觸自然光，對睡眠有甚麼作用？","opts":["令人更難入睡","幫助晚上較早想睡","與睡眠無關","只在冬天有用"],"correct":1,"scored":true,"scale":"knowledge","pre":true,"post":true}]},{"id":"C","title":"信心","items":[{"id":"C1","type":"likert5","q":"我有信心在未來一個月，每週至少五天做到睡前一小時停用屏幕。","anchors":["非常不同意","非常同意"],"scored":true,"scale":"GSES","pre":true,"post":true},{"id":"C2","type":"likert5","q":"我相信改善睡眠會直接影響我的工作或學習表現。","anchors":["非常不同意","非常同意"],"scored":true,"scale":"SBS","pre":true,"post":true}]},{"id":"D","title":"過去一星期","items":[{"id":"D1","type":"number","q":"平均每晚實際睡多少小時？（可填小數，例如 6.5）","min":0,"max":14,"step":0.5,"scored":true,"scale":"PSQI","pre":true,"post":true},{"id":"D2","type":"number","q":"有幾晚做到「睡前一小時停用屏幕」？（0–7）","min":0,"max":7,"step":1,"scored":true,"scale":"SHI","pre":true,"post":true}]},{"id":"E","title":"準備程度","items":[{"id":"E1","type":"single","q":"關於「睡前一小時停用屏幕」，你目前的狀況最接近哪一項？","opts":["沒想過要做，未來 6 個月也不打算做","有想過，但未打算 30 天內開始","打算未來 30 天內開始","已經開始，但未夠 6 個月","已持續 6 個月或以上","做過，但最近中斷了"],"scored":true,"scale":"TTM","pre":true,"post":true}]},{"id":"I","title":"活動後感想（只在後測）","items":[{"id":"I1","type":"likert5","q":"整體而言，你對今日活動的滿意程度是？","anchors":["非常不滿意","非常滿意"],"scored":true,"scale":"satisfaction","pre":false,"post":true},{"id":"I2","type":"likert5","q":"今日的內容對你有用嗎？","anchors":["完全沒用","非常有用"],"scored":true,"scale":"satisfaction","pre":false,"post":true},{"id":"I3","type":"likert5","q":"你會推薦這個活動給同事或朋友嗎？","anchors":["一定不會","一定會"],"scored":true,"scale":"satisfaction","pre":false,"post":true}]}],"scoring":{"knowledge":{"items":["B1","B2","B3","B4","B5","B6"],"correct":{"B1":2,"B2":2,"B3":1,"B4":1,"B5":2,"B6":1},"max":6},"scales":{"selfEfficacy":{"items":["C1"],"range":[1,5]},"attitude":{"items":["C2"],"range":[1,5]},"sleepHours":{"items":["D1"],"unit":"hours"},"screenOffDays":{"items":["D2"],"range":[0,7]},"stage":{"items":["E1"],"type":"categorical"},"satisfactionMean":{"items":["I1","I2","I3"],"range":[1,5]}}}};
+const A = {
+  me: null, data: [], users: [],
+  api(path, opts = {}) {
+    return fetch(path, Object.assign({ credentials: 'same-origin', headers: { 'Content-Type': 'application/json' } }, opts))
+      .then(async r => {
+        const j = await r.json().catch(() => ({}));
+        if (!r.ok) throw new Error(j.error || ('HTTP ' + r.status));
+        return j;
+      });
+  },
+  toast(m) { const t = document.getElementById('toast'); t.textContent = m; t.classList.add('on'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('on'), 1800); },
+  async boot() {
+    try {
+      const h = await this.api('/api/health');
+      if (!h.hasOwner) return this.show('setup');
+      const me = await this.api('/api/me').catch(() => null);
+      if (!me) return this.show('login');
+      this.me = me.user; this.show('dash'); this.loadAll();
+    } catch (e) {
+      this.show('login');
+      document.getElementById('lgErr').textContent = '無法連接伺服器：' + e.message;
+    }
+  },
+  show(id) {
+    ['setup', 'login', 'dash'].forEach(s => document.getElementById(s).classList.toggle('hidden', s !== id));
+  },
+  async setup() {
+    const username = document.getElementById('suName').value.trim();
+    const p1 = document.getElementById('suPass').value, p2 = document.getElementById('suPass2').value;
+    if (p1 !== p2) return this.toast('兩次密碼不一致');
+    try {
+      const r = await this.api('/api/setup', { method: 'POST', body: JSON.stringify({ username, password: p1 }) });
+      this.me = r.user; this.show('dash'); this.loadAll(); this.toast('主管理員已建立');
+    } catch (e) { this.toast(e.message); }
+  },
+  async login() {
+    const username = document.getElementById('lgName').value.trim();
+    const password = document.getElementById('lgPass').value;
+    try {
+      const r = await this.api('/api/login', { method: 'POST', body: JSON.stringify({ username, password }) });
+      this.me = r.user; this.show('dash'); this.loadAll();
+    } catch (e) { document.getElementById('lgErr').textContent = e.message; }
+  },
+  async logout() { await this.api('/api/logout', { method: 'POST' }).catch(() => {}); location.reload(); },
+  tab(name) {
+    ['overview', 'rows', 'users'].forEach(t => {
+      document.getElementById('pane-' + t).classList.toggle('hidden', t !== name);
+      document.getElementById('t-' + t).classList.toggle('on', t === name);
+    });
+    if (name === 'users') this.loadUsers();
+  },
+  loadAll() {
+    document.getElementById('whoLine').textContent = this.me.username + ' · 已登入';
+    const tag = document.getElementById('roleTag');
+    const label = { owner: '主管理員', admin: '管理員', viewer: '檢視者' }[this.me.role] || this.me.role;
+    tag.textContent = label;
+    tag.className = 'pill ' + (this.me.role === 'viewer' ? 'warn' : 'ok');
+    document.getElementById('addUserCard').style.display = this.me.role === 'owner' ? 'block' : 'none';
+    this.reload();
+  },
+  async reload() {
+    try { const r = await this.api('/api/responses'); this.data = r.responses || []; } catch (e) { this.data = []; }
+    this.render();
+  },
+  /* ---------- 統計 ---------- */
+  knowledgeOf(rec) {
+    // 由 survey schema 計算答對題數
+    const items = [];
+    (SURVEY.sections || []).forEach(s => (s.items || []).forEach(it => { if (it.correct !== undefined) items.push(it); }));
+    let correct = 0;
+    items.forEach(it => { if (rec[it.id] === it.correct) correct++; });
+    return { correct, total: items.length };
+  },
+  render() {
+    const d = this.data;
+    const pre = d.filter(r => r.mode === 'pre'), post = d.filter(r => r.mode === 'post');
+    const kAll = d.map(r => this.knowledgeOf(r));
+    const avg = kAll.length ? (kAll.reduce((s, k) => s + k.correct, 0) / kAll.length) : 0;
+    const total = kAll.length ? kAll[0].total : 0;
+    const passRate = kAll.length ? Math.round(kAll.filter(k => k.correct >= Math.ceil(k.total * 0.8)).length / kAll.length * 100) : 0;
+
+    document.getElementById('kpis').innerHTML = [
+      ['總回應', d.length], ['前測', pre.length], ['後測', post.length],
+      ['知識平均', total ? `${avg.toFixed(1)} / ${total}` : '—'],
+      ['達標率（≥80%）', passRate + '%'],
+    ].map(([l, n]) => `<div class="kpi"><div class="n">${n}</div><div class="l">${l}</div></div>`).join('');
+
+    // 分佈
+    const buckets = {};
+    kAll.forEach(k => { buckets[k.correct] = (buckets[k.correct] || 0) + 1; });
+    const maxB = Math.max(1, ...Object.values(buckets));
+    document.getElementById('dist').innerHTML = total
+      ? Array.from({ length: total + 1 }, (_, i) => i).map(i => {
+        const n = buckets[i] || 0;
+        return `<div style="margin:7px 0"><div class="row"><small>答對 ${i} 題</small><small style="margin-left:auto">${n}</small></div>
+                <div class="bar"><i style="width:${(n / maxB * 100).toFixed(0)}%"></i></div></div>`;
+      }).join('')
+      : '<small>暫時沒有資料</small>';
+
+    // 前後測配對
+    const byCode = {};
+    d.forEach(r => { if (r.code) (byCode[r.code] = byCode[r.code] || {})[r.mode] = r; });
+    const pairs = Object.values(byCode).filter(x => x.pre && x.post);
+    if (pairs.length) {
+      const rows = pairs.map(x => {
+        const a = this.knowledgeOf(x.pre).correct, b = this.knowledgeOf(x.post).correct;
+        return [x.pre.code, a, b, b - a];
+      });
+      const gain = rows.reduce((s, r) => s + r[3], 0) / rows.length;
+      document.getElementById('paired').innerHTML =
+        `<div class="muted" style="margin-bottom:8px">配對 ${pairs.length} 組，平均知識變化 <b style="color:#fff">${gain > 0 ? '+' : ''}${gain.toFixed(1)} 題</b></div>` +
+        '<table><tr><th>匿名碼</th><th>前</th><th>後</th><th>差</th></tr>' +
+        rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3] > 0 ? '+' : ''}${r[3]}</td></tr>`).join('') + '</table>';
+    } else {
+      document.getElementById('paired').textContent = '尚未有可配對的前後測（需同一匿名碼）。';
+    }
+
+    // 回應列表
+    document.getElementById('rowList').innerHTML = d.length ? d.map(r => {
+      const k = this.knowledgeOf(r);
+      const when = (r.receivedAt || '').replace('T', ' ').slice(0, 16);
+      return `<div class="card">
+        <div class="row"><b>${r.code || '（無碼）'}</b>
+          <span class="pill ${r.mode === 'post' ? 'ok' : ''}">${r.mode === 'post' ? '後測' : '前測'}</span>
+          <span class="pill">知識 ${k.correct}/${k.total}</span>
+          <span class="muted" style="margin-left:auto">${when}</span></div>
+        <details><summary class="muted" style="cursor:pointer;margin-top:8px">查看答案</summary>
+          <div class="detail">${Object.keys(r).filter(k => !['id', 'receivedAt', 'mode', 'code'].includes(k))
+            .map(k => `<b>${k}</b>：${typeof r[k] === 'object' ? JSON.stringify(r[k]) : r[k]}`).join('<br>')}</div>
+        </details>
+        ${this.me.role !== 'viewer' ? `<button class="btn sm ghost" onclick="A.del('${r.id}')">刪除</button>` : ''}
+      </div>`;
+    }).join('') : '<div class="card muted">暫時沒有回應。完成一份問卷後會出現在這裡。</div>';
+  },
+  async del(id) {
+    if (!confirm('確定刪除這筆回應？')) return;
+    try { await this.api('/api/responses/' + id, { method: 'DELETE' }); this.reload(); this.toast('已刪除'); }
+    catch (e) { this.toast(e.message); }
+  },
+  async exportCSV() {
+    try {
+      const r = await fetch('/api/export.csv', { credentials: 'same-origin' });
+      if (!r.ok) throw new Error((await r.json().catch(() => ({}))).error || '匯出失敗');
+      const blob = await r.blob();
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'sleep_quest_' + new Date().toISOString().slice(0, 10) + '.csv';
+      a.click();
+      this.toast('已匯出（需登入，已完成）');
+    } catch (e) { this.toast(e.message); }
+  },
+  /* ---------- 帳號管理 ---------- */
+  async loadUsers() {
+    if (this.me.role === 'viewer') {
+      document.getElementById('userList').innerHTML = '<div class="card muted">檢視者不能管理帳號。</div>';
+      return;
+    }
+    try { const r = await this.api('/api/users'); this.users = r.users; } catch (e) { this.users = []; }
+    document.getElementById('userList').innerHTML = this.users.map(u => `
+      <div class="card">
+        <div class="row"><b>${u.username}</b>
+          <span class="pill ${u.role === 'owner' ? 'ok' : u.role === 'admin' ? '' : 'warn'}">${u.role}</span>
+          ${u.active === false ? '<span class="pill bad">已停用</span>' : ''}
+          <span class="muted" style="margin-left:auto">${(u.lastLogin || '未登入').replace('T', ' ').slice(0, 16)}</span></div>
+        ${this.me.role === 'owner' && u.role !== 'owner' ? `
+          <div class="row" style="margin-top:8px">
+            <select onchange="A.setRole('${u.id}', this.value)" style="flex:1">
+              ${['viewer', 'admin'].map(r => `<option value="${r}" ${u.role === r ? 'selected' : ''}>${r === 'admin' ? '管理員' : '檢視者'}</option>`).join('')}
+            </select>
+            <button class="btn sm ghost" onclick="A.toggleActive('${u.id}', ${u.active !== false})">${u.active !== false ? '停用' : '啟用'}</button>
+            <button class="btn sm ghost" onclick="A.resetPass('${u.id}')">重設密碼</button>
+            <button class="btn sm ghost" onclick="A.delUser('${u.id}')">刪除</button>
+          </div>` : ''}
+      </div>`).join('') || '<div class="card muted">沒有其他帳號。</div>';
+  },
+  async addUser() {
+    const username = document.getElementById('nuName').value.trim();
+    const password = document.getElementById('nuPass').value;
+    const role = document.getElementById('nuRole').value;
+    try {
+      await this.api('/api/users', { method: 'POST', body: JSON.stringify({ username, password, role }) });
+      document.getElementById('nuName').value = ''; document.getElementById('nuPass').value = '';
+      this.loadUsers(); this.toast('帳號已建立');
+    } catch (e) { this.toast(e.message); }
+  },
+  async setRole(id, role) {
+    try { await this.api('/api/users/' + id, { method: 'PATCH', body: JSON.stringify({ role }) }); this.toast('權限已更新'); this.loadUsers(); }
+    catch (e) { this.toast(e.message); }
+  },
+  async toggleActive(id, active) {
+    try { await this.api('/api/users/' + id, { method: 'PATCH', body: JSON.stringify({ active: !active }) }); this.loadUsers(); }
+    catch (e) { this.toast(e.message); }
+  },
+  async resetPass(id) {
+    const pw = prompt('輸入新密碼（至少 8 字元）：');
+    if (!pw) return;
+    try { await this.api('/api/users/' + id, { method: 'PATCH', body: JSON.stringify({ password: pw }) }); this.toast('已重設'); }
+    catch (e) { this.toast(e.message); }
+  },
+  async delUser(id) {
+    if (!confirm('確定刪除這個帳號？')) return;
+    try { await this.api('/api/users/' + id, { method: 'DELETE' }); this.loadUsers(); this.toast('已刪除'); }
+    catch (e) { this.toast(e.message); }
+  }
+};
+A.boot();
+</script>
+</body>
+</html>
