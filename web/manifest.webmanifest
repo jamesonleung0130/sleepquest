@@ -1,0 +1,16 @@
+{
+  "name": "睡得好，做得好：三夜好眠挑戰",
+  "short_name": "三夜好眠",
+  "description": "以 TTM 跨理論模型設計的睡眠健康教育卡牌遊戲（NUR401 學生專題）",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0e1630",
+  "theme_color": "#0e1630",
+  "lang": "zh-Hant-HK",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
+  ]
+}
