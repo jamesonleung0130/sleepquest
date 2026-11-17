@@ -1,0 +1,6 @@
+﻿node_modules/
+server/data/users.json
+server/data/responses.json
+.env
+*.log
+cloudflared.exe
