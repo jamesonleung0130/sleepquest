@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0e1630">
+<title>聯機房間 · 睡得好，做得好</title>
+<style>
+:root{--navy:#0e1630;--cream:#f6f3ea;--muted:#8b95b5;
+  --action:#3DDC97;--skill:#A78BFA;--myth:#F5B450;--disrupt:#F0705A;--maintain:#5BB8E8}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--navy);color:var(--cream);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC","Microsoft JhengHei",sans-serif}
+body{background:radial-gradient(120% 70% at 50% 0%,#1c2554 0%,#0e1630 55%,#080d1f 100%) fixed;min-height:100vh}
+.wrap{max-width:640px;margin:0 auto;padding:16px 14px calc(28px + env(safe-area-inset-bottom))}
+.hidden{display:none!important}
+h1{font-size:22px;margin:8px 0 4px}
+h2{font-size:15px;margin:18px 0 8px;color:#cfd7ee}
+small,.muted{color:var(--muted);font-size:12px;line-height:1.6}
+.btn{display:block;width:100%;border:0;border-radius:16px;padding:15px 16px;font-size:16px;font-weight:700;
+  color:#0b1020;background:var(--cream);margin:10px 0;cursor:pointer;font-family:inherit}
+.btn.ghost{background:transparent;color:var(--cream);border:1.5px solid rgba(246,243,234,.25)}
+.btn:active{transform:scale(.98)}
+input{width:100%;padding:13px;border-radius:14px;font-size:16px;font-family:inherit;
+  border:1.5px solid rgba(246,243,234,.2);background:rgba(255,255,255,.05);color:var(--cream);margin:7px 0}
+.code{font-size:38px;font-weight:800;letter-spacing:8px;text-align:center;margin:10px 0}
+.hud{position:sticky;top:0;z-index:9;background:rgba(10,15,33,.94);backdrop-filter:blur(10px);
+  padding:10px 14px;margin:0 -14px 10px;border-bottom:1px solid rgba(255,255,255,.08);
+  display:flex;align-items:center;gap:10px;font-size:13px}
+.hud b{font-size:14px}
+.hud .rt{margin-left:auto;color:var(--muted);font-size:12px}
+.card{border-radius:18px;overflow:hidden;background:linear-gradient(180deg,#18203f,#141a33);
+  border:1px solid rgba(255,255,255,.08);margin:10px 0;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.card .band{display:flex;align-items:center;gap:8px;padding:9px 13px;font-weight:800;color:#0b1020;font-size:14px}
+.card .band .en{font-size:9px;letter-spacing:1.4px;opacity:.7}
+.card .band .pts{margin-left:auto;background:#fff;border-radius:99px;min-width:30px;height:30px;
+  display:grid;place-items:center;font-size:13px;font-weight:800}
+.card .body{padding:14px}
+.card .t{font-size:17px;font-weight:800;margin:0 0 8px;color:#fff;line-height:1.4}
+.card .e{font-size:13.5px;color:#dfe4f2;margin:0 0 10px;line-height:1.6}
+.card .w{background:rgba(255,255,255,.05);border-radius:10px;padding:9px;font-size:12px;color:#c8d1e8;line-height:1.6}
+.card .w b{display:block;font-size:10.5px;letter-spacing:1px;opacity:.75;margin-bottom:4px}
+.pickable{cursor:pointer}
+.pickable:active{transform:scale(.985)}
+.players{width:100%;border-collapse:collapse;font-size:13px}
+.players th,.players td{text-align:left;padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.09)}
+.players th{color:var(--muted);font-size:11px;font-weight:600}
+.players tr.me td{background:rgba(167,139,250,.12)}
+.players tr.now td{box-shadow:inset 3px 0 0 var(--skill)}
+.log{background:rgba(255,255,255,.04);border-radius:12px;padding:10px;font-size:12px;line-height:1.7;max-height:160px;overflow:auto}
+.log div{opacity:.85}
+.timer{width:150px;height:150px;margin:10px auto;border-radius:50%;display:grid;place-items:center;
+  background:conic-gradient(var(--skill) var(--p,0%), rgba(255,255,255,.1) 0);position:relative}
+.timer:after{content:"";position:absolute;inset:9px;border-radius:50%;background:#141a33}
+.timer span{position:relative;font-size:40px;font-weight:800}
+.big{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.big .btn{font-size:20px;padding:22px 0}
+.btn.t{background:#63c896}.btn.f{background:#f0866e}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:24px;background:rgba(246,243,234,.96);
+  color:#0b1020;padding:11px 18px;border-radius:99px;font-weight:700;font-size:13.5px;z-index:99;opacity:0;transition:.2s}
+.toast.on{opacity:1;bottom:34px}
+.center{text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ===== 入口 ===== -->
+<section id="home">
+  <h1>聯機房間</h1>
+  <p class="muted">用自己的網絡加入同一個房間玩。不需要同一個 WiFi，也不需要同一部手機。</p>
+
+  <div class="card"><div class="body">
+    <div class="t" style="font-size:15px">建立房間</div>
+    <input id="hostName" placeholder="你的名字" autocomplete="nickname">
+    <button class="btn" onclick="R.create()">建立房間並取得代碼</button>
+  </div></div>
+
+  <div class="card"><div class="body">
+    <div class="t" style="font-size:15px">加入房間</div>
+    <input id="joinCode" placeholder="6 位房間代碼" inputmode="numeric" maxlength="6">
+    <input id="joinName" placeholder="你的名字" autocomplete="nickname">
+    <button class="btn ghost" onclick="R.join()">加入</button>
+  </div></div>
+
+  <small id="homeErr" style="color:#ffb1a3"></small>
+  <p class="muted" style="margin-top:16px">2–6 人。主持人按「開始」後，三夜自動輪流，每人每次抽兩張打一張。</p>
+  <div id="noServer" class="hidden card"><div class="body">
+    <div class="t" style="font-size:15px">此頁需要伺服器版本</div>
+    <p class="muted">你正在瀏覽純靜態網站（例如 surge 上的示範版），聯機房間需要執行 <code>啟動伺服器.bat</code> 的本機／伺服器版本。
+      單機與大屏模式仍可在 <a href="play.html" style="color:#9ec8ff">play.html</a> 使用。</p>
+  </div></div>
+</section>
+
+<!-- ===== 大廳 ===== -->
+<section id="lobby" class="hidden">
+  <div class="hud"><b>房間</b><span id="lCode" class="rt"></span></div>
+  <div class="code" id="lCodeBig">------</div>
+  <p class="muted center">把這 6 位數字傳給朋友，他們在「加入房間」輸入即可。</p>
+  <div class="card"><div class="body">
+    <div class="t" style="font-size:14px">房間成員</div>
+    <table class="players" id="lPlayers"></table>
+  </div></div>
+  <button class="btn hidden" id="startBtn" onclick="R.send({type:'start'})">開始遊戲（主持人）</button>
+  <p class="muted center" id="lWait">等待主持人開始…</p>
+</section>
+
+<!-- ===== 遊戲 ===== -->
+<section id="game" class="hidden">
+  <div class="hud">
+    <div><div class="rt" id="gNight">NIGHT 1</div><b id="gWho">—</b></div>
+    <div class="rt" id="gCode"></div>
+  </div>
+  <div id="gMain"></div>
+</section>
+
+<div class="toast" id="toast"></div>
+</div>
+
+<script>
+const TYPE = {action:['行動卡','ACTION','#3DDC97'],skill:['技能卡','SKILL','#A78BFA'],
+  myth:['迷思卡','MYTH-BUSTER','#F5B450'],disrupt:['干擾卡','DISRUPTOR','#F0705A'],
+  maintain:['維持卡','MAINTAIN','#5BB8E8']};
+const byId = {};
+let CARDS = [];
+
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('on');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('on'),2000);}
+function show(id){['home','lobby','game'].forEach(s=>document.getElementById(s).classList.toggle('hidden',s!==id));}
+
+function cardHTML(id, opts={}){
+  const c = byId[id]; if(!c) return '';
+  const [label,en,col] = TYPE[c.type];
+  const click = opts.click ? ` onclick="${opts.click}"` : '';
+  const cls = 'card' + (opts.click ? ' pickable' : '');
+  let inner;
+  if(c.type==='myth'){
+    inner = `<div class="t">「${esc(c.stmt)}」</div><div class="muted" style="font-size:12px">全桌一起判斷真假</div>`;
+  }else{
+    inner = `<div class="t">${esc(c.title)}</div><div class="e">${esc(c.effect)}</div>
+      <div class="w"><b>為什麼？</b>${esc(c.why)}</div>`;
+  }
+  return `<div class="${cls}"${click}>
+    <div class="band" style="background:${col}"><span>${label}</span><span class="en">${en}</span>
+      <span class="pts">+${c.points??2}</span></div>
+    <div class="body">${inner}</div></div>`;
+}
+
+const R = {
+  ws:null, code:null, pid:null, name:'', state:null, busy:false,
+  init(cards){ CARDS = cards || []; CARDS.forEach(c=>byId[c.id]=c); },
+  api(p,o){ return fetch(p,Object.assign({headers:{'Content-Type':'application/json'}},o)).then(async r=>{
+    const j=await r.json().catch(()=>({})); if(!r.ok) throw new Error(j.error||('HTTP '+r.status)); return j; }); },
+
+  async create(){
+    const name = document.getElementById('hostName').value.trim() || '主持人';
+    try{
+      const r = await this.api('/api/rooms',{method:'POST',body:JSON.stringify({name})});
+      this.code=r.code; this.pid=r.playerId; this.name=name;
+      this.connect();
+    }catch(e){ document.getElementById('homeErr').textContent = '建立失敗：'+e.message; }
+  },
+  join(){
+    const code = document.getElementById('joinCode').value.trim();
+    const name = document.getElementById('joinName').value.trim() || '玩家';
+    if(!/^\d{6}$/.test(code)) return toast('請輸入 6 位數字代碼');
+    this.code=code; this.name=name;
+    this.pid = sessionStorage.getItem('room_pid_'+code) || null;
+    this.connect();
+  },
+  connect(){
+    const proto = location.protocol === 'https:' ? 'wss' : 'ws';
+    const q = new URLSearchParams({code:this.code, name:this.name});
+    if(this.pid) q.set('pid', this.pid);
+    this.ws = new WebSocket(`${proto}://${location.host}/ws?${q}`);
+    this.ws.onmessage = ev => {
+      const m = JSON.parse(ev.data);
+      if(m.type==='hello'){ this.pid=m.playerId; sessionStorage.setItem('room_pid_'+this.code, m.playerId); }
+      if(m.type==='state'){ this.state=m.state; this.render(); }
+      if(m.type==='error'){ toast(m.error); }
+    };
+    this.ws.onclose = ()=>{ if(this.state && this.state.phase!=='over') toast('連線中斷，重新整理可重連'); };
+    this.ws.onerror = ()=>{ document.getElementById('homeErr').textContent='連線失敗，請確認網址與房間代碼。'; };
+  },
+  send(obj){ if(this.ws && this.ws.readyState===1) this.ws.send(JSON.stringify(obj)); else toast('未連線'); },
+
+  render(){
+    const s = this.state; if(!s) return;
+    if(s.phase==='lobby'){ show('lobby'); this.renderLobby(s); return; }
+    show('game'); this.renderGame(s);
+  },
+  renderLobby(s){
+    document.getElementById('lCode').textContent = s.code;
+    document.getElementById('lCodeBig').textContent = s.code;
+    document.getElementById('lPlayers').innerHTML =
+      '<tr><th>玩家</th><th>狀態</th></tr>' +
+      s.players.map(p=>`<tr class="${p.id===s.youId?'me':''}"><td>${esc(p.name)}${p.id===s.hostId?' （主持）':''}</td>
+        <td>${p.online?'<span style="color:#9ff0c8">在線</span>':'<span class="muted">離線</span>'}</td></tr>`).join('');
+    const isHost = s.youId === s.hostId;
+    document.getElementById('startBtn').classList.toggle('hidden', !isHost);
+    document.getElementById('lWait').classList.toggle('hidden', isHost);
+  },
+  renderGame(s){
+    const me = s.players.find(p=>p.id===s.youId) || {};
+    const cur = s.players[s.turn] || {};
+    document.getElementById('gNight').textContent = s.phase==='over' ? 'FINISHED' : `NIGHT ${s.night+1} / 3`;
+    document.getElementById('gWho').textContent = s.phase==='over' ? '三夜結束' : (s.turn===s.players.findIndex(p=>p.id===s.youId) ? '你的回合' : `輪到 ${cur.name}`);
+    document.getElementById('gCode').textContent = '房間 ' + s.code;
+
+    if(s.phase==='over'){
+      const rank = s.players.slice().sort((a,b)=>b.pts-a.pts);
+      document.getElementById('gMain').innerHTML = `
+        <div class="card"><div class="body">
+          <div class="t">最終成績</div>
+          <table class="players"><tr><th>#</th><th>玩家</th><th>分</th><th>星</th></tr>
+          ${rank.map((p,i)=>`<tr class="${p.id===s.youId?'me':''}"><td>${i+1}</td><td>${esc(p.name)}</td><td><b>${p.pts}</b></td><td>${p.stars}</td></tr>`).join('')}
+          </table></div></div>
+        <button class="btn ghost" onclick="location.reload()">再開一間房</button>`;
+      return;
+    }
+
+    const myTurn = s.turn === s.players.findIndex(p=>p.id===s.youId);
+    const ev = byId[s.event];
+    let html = '';
+    if(ev){
+      html += `<div class="card" style="border-color:${TYPE.disrupt[2]}55">
+        <div class="band" style="background:${TYPE.disrupt[2]}"><span>今晚事件</span><span class="en">DISRUPTOR</span></div>
+        <div class="body"><div class="t">${esc(ev.title)}</div><div class="e">${esc(ev.effect)}</div>
+        ${s.eventDone?'<div class="muted">已被抵消</div>':'<div class="muted">未被抵消</div>'}</div></div>`;
+    }
+    html += `<table class="players"><tr><th>玩家</th><th>分</th><th>星</th><th>手牌</th></tr>
+      ${s.players.map((p,i)=>`<tr class="${p.id===s.youId?'me':''} ${i===s.turn?'now':''}">
+        <td>${esc(p.name)}</td><td><b>${p.pts}</b></td><td>${p.stars}</td>
+        <td>${p.handCount}</td></tr>`).join('')}
+    </table>`;
+
+    if(myTurn && me.hand && me.hand.length){
+      html += `<h2>你的手牌（選一張打出）</h2>`;
+      me.hand.forEach((id,i)=>{
+        html += cardHTML(id, {click:`R.play(${i})`});
+      });
+    } else if(myTurn){
+      html += `<p class="muted center">等待發牌…</p>`;
+    } else {
+      html += `<p class="muted center">等待 ${esc(cur.name)} 出牌…</p>`;
+    }
+
+    if(s.log && s.log.length){
+      html += `<h2>記錄</h2><div class="log">${s.log.slice().reverse().map(l=>`<div>${esc(l.text)}</div>`).join('')}</div>`;
+    }
+    document.getElementById('gMain').innerHTML = html;
+  },
+
+  play(idx){
+    if(this.busy) return; this.busy = true; setTimeout(()=>this.busy=false, 600);
+    const s = this.state;
+    const me = s.players.find(p=>p.id===s.youId);
+    const id = me.hand[idx];
+    const c = byId[id];
+    if(c.type === 'skill'){
+      this.skillOverlay(c, ()=> this.send({type:'play', idx}));
+      return;
+    }
+    if(c.type === 'myth'){
+      this.mythOverlay(c, (ans)=>{
+        this.send({type:'play', idx});
+        setTimeout(()=>this.send({type:'myth', answer:ans}), 180);
+      });
+      return;
+    }
+    this.send({type:'play', idx});
+  },
+  skillOverlay(c, done){
+    let left = c.seconds || 30;
+    document.getElementById('gMain').innerHTML = `<div class="center">
+      <div class="muted">技能卡 · 全桌一起做</div>
+      <h2 style="margin:8px 0">${esc(c.title)}</h2>
+      <p class="muted">${esc(c.effect)}</p>
+      <div class="timer" id="tm" style="--p:0%"><span id="tsec">${left}</span></div>
+      <p style="color:#c3b6ff;font-weight:700">「${esc(c.script||'')}」</p>
+    </div>
+    <button class="btn" onclick="R.finishSkill()">完成了</button>`;
+    const ring = document.getElementById('tm'), sec = document.getElementById('tsec');
+    clearInterval(this._t);
+    this._t = setInterval(()=>{
+      left--;
+      if(left<=0){ clearInterval(this._t); R.finishSkill(); return; }
+      sec.textContent = left;
+      ring.style.setProperty('--p', ((c.seconds-left)/c.seconds*100).toFixed(0)+'%');
+    },1000);
+    this._done = done;
+  },
+  finishSkill(){ clearInterval(this._t); const f=this._done; this._done=null; if(f) f(); },
+  mythOverlay(c, cb){
+    document.getElementById('gMain').innerHTML = `
+      <div class="center muted">迷思卡 · 判斷真假</div>
+      ${cardHTML(c.id)}
+      <div class="big">
+        <button class="btn t" onclick="R.answerMyth(true)">對</button>
+        <button class="btn f" onclick="R.answerMyth(false)">錯</button>
+      </div>
+      <small class="muted center" style="display:block;margin-top:8px">答對 +2 分（只有你可以作答）</small>`;
+    this._mythCb = cb;
+  },
+  answerMyth(ans){
+    clearInterval(this._t);
+    const cb = this._mythCb; this._mythCb = null;
+    if(cb) cb(ans);
+  }
+};
+</script>
+<script>
+/* 卡牌資料由 build 注入 */
+window.__CARDS__ = {"meta":{"game":"睡得好，做得好：三夜好眠挑戰","game_en":"Sleep Well, Work Well — Three Nights Challenge","version":"1.0","players":"3-6 人 + 1 主持人","duration":"25 分鐘","based_on":"TTM 跨理論模型 × 睡眠衛生教育","types":[{"key":"action","label":"行動卡","en":"ACTION","color":"#3DDC97","desc":"睡前好習慣，打出即得分"},{"key":"skill","label":"技能卡","en":"SKILL","color":"#A78BFA","desc":"全桌一起做 30 秒放鬆練習"},{"key":"myth","label":"迷思卡","en":"MYTH-BUSTER","color":"#F5B450","desc":"全桌舉牌判斷真假"},{"key":"disrupt","label":"干擾卡","en":"DISRUPTOR","color":"#F0705A","desc":"夜晚事件，全桌扣分"},{"key":"maintain","label":"維持卡","en":"MAINTAIN","color":"#5BB8E8","desc":"復發預防，抵消干擾"}]},"cards":[{"id":"A01","type":"action","title":"固定起床時間","effect":"每晚同一時間起床，週末也不超過 1 小時","why":"穩定生理時鐘，比「逼自己早睡」更有效","points":2,"tags":["作息"]},{"id":"A02","type":"action","title":"睡前 60 分鐘關螢幕","effect":"睡前一小時停用手機、平板、電腦","why":"屏幕藍光抑制褪黑素，令入睡延後、REM 減少","points":2,"tags":["藍光"]},{"id":"A03","type":"action","title":"手機放客廳充電","effect":"手機不在床邊，用實體鬧鐘起床","why":"切斷「再滑五分鐘」與半夜通知的循環","points":2,"tags":["藍光","通知"]},{"id":"A04","type":"action","title":"咖啡因截止線","effect":"下午 2 時後不喝咖啡、濃茶、能量飲品","why":"咖啡因半衰期 5-6 小時，睡前仍有 1/4 留在體內","points":2,"tags":["飲食"]},{"id":"A05","type":"action","title":"睡前 3 小時不飲酒","effect":"應酬改在較早時段，或以水代酒","why":"酒精令人快入睡，卻切斷深睡與 REM、後半夜易醒","points":2,"tags":["飲食"]},{"id":"A06","type":"action","title":"睡前不食大餐","effect":"睡前 2-3 小時完成晚餐，戒宵夜","why":"消化與胃酸倒流會干擾入睡與夜間覺醒","points":2,"tags":["飲食"]},{"id":"A07","type":"action","title":"早上曬 15 分鐘光","effect":"起床後到戶外或窗邊接觸自然光","why":"晨光校準生理時鐘，晚上自然較早想睡","points":2,"tags":["作息"]},{"id":"A08","type":"action","title":"規律運動","effect":"每週 150 分鐘中等強度活動，避開睡前 2 小時","why":"運動增加深睡比例，但睡前劇烈運動會延後入睡","points":2,"tags":["運動"]},{"id":"A09","type":"action","title":"午睡 20 分鐘","effect":"下午 3 時前小睡，不超過 30 分鐘","why":"過長過晚的午睡會「偷走」晚上的睡意","points":2,"tags":["作息"]},{"id":"A10","type":"action","title":"臥室調至涼爽","effect":"室溫約 18-20°C，被褥透氣","why":"入睡需要核心體溫下降，悶熱環境令人淺睡易醒","points":2,"tags":["環境"]},{"id":"A11","type":"action","title":"房間全黑","effect":"遮光窗簾或眼罩，熄滅指示燈","why":"光線是褪黑素最強的抑制訊號，微光也會影響睡眠深度","points":2,"tags":["環境"]},{"id":"A12","type":"action","title":"睡前調暗燈光","effect":"睡前一小時改用暖色小燈","why":"用「光線變暗」告訴大腦：夜晚開始了","points":2,"tags":["環境"]},{"id":"A13","type":"action","title":"寫下明日三件事","effect":"睡前把待辦與煩惱寫在紙上","why":"把「記住」交給紙張，減少上床後反覆思考","points":2,"tags":["心理"]},{"id":"A14","type":"action","title":"床只用來睡覺","effect":"不在床上工作、食飯、追劇","why":"讓大腦重新把「床」與「睡眠」連在一起","points":2,"tags":["心理"]},{"id":"S01","type":"skill","title":"4-7-8 呼吸","effect":"全桌一起做：吸 4 秒、憋 7 秒、呼 8 秒，重複 4 次","why":"延長呼氣啟動副交感神經，降低心率與警覺","points":1,"seconds":40,"script":"吸氣 4…憋住 7…慢慢呼 8…再來一次"},{"id":"S02","type":"skill","title":"腹式呼吸","effect":"一手放腹部：吸 4 秒（腹部鼓起）、呼 6 秒","why":"橫膈膜呼吸取代淺快的胸式呼吸，最快 1 分鐘見效","points":1,"seconds":40,"script":"吸氣…腹部像氣球脹起…呼氣…慢慢洩氣"},{"id":"S03","type":"skill","title":"漸進式肌肉放鬆","effect":"肩、手、腳依次用力 5 秒再放鬆 10 秒","why":"先繃緊再放鬆，身體才學懂「放鬆」的感覺","points":1,"seconds":45,"script":"聳肩…用力…5、4、3、2、1…放鬆，感受下沉"},{"id":"S04","type":"skill","title":"身體掃描","effect":"閉眼由頭到腳掃描一次，不評價、只觀察","why":"把注意力由「想法」帶回「身體」，是中斷反覆思考的練習","points":1,"seconds":45,"script":"額頭…眉眼…下顎…肩…一路向下，直至腳趾"},{"id":"S05","type":"skill","title":"生理性嘆息","effect":"鼻吸兩下（第二下短吸），再長長呼氣","why":"一次性排出二氧化碳，最快 1 次呼吸降低緊張","points":1,"seconds":25,"script":"吸…再吸一小口…長呼，做 3 次"},{"id":"S06","type":"skill","title":"感恩三件事","effect":"說出今天三件值得感謝的小事","why":"睡前正向回想，減少焦慮反芻，改善入睡主觀感受","points":1,"seconds":40,"script":"第一件…第二件…第三件…"},{"id":"S07","type":"skill","title":"頸肩伸展","effect":"頭側向左 15 秒、右 15 秒，肩膀向後打圈","why":"放鬆久坐與手機造成的肩頸張力，身體鬆、睡意來","points":1,"seconds":40,"script":"左耳找左肩…深呼吸…換右邊"},{"id":"S08","type":"skill","title":"20-20-20 護眼","effect":"每 20 分鐘，望 20 呎外 20 秒；睡前做一次","why":"減少屏幕造成的眼睛與大腦持續警覺","points":1,"seconds":25,"script":"望向窗外最遠處…20 秒…眨眼…"},{"id":"S09","type":"skill","title":"白噪音 30 秒","effect":"播放雨聲／風扇聲，閉眼聆聽 30 秒","why":"穩定背景聲掩蓋環境突發噪音，減少夜間驚醒","points":1,"seconds":35,"script":"只聽聲音，不分析…讓聲音蓋過思緒"},{"id":"S10","type":"skill","title":"煩惱停車場","effect":"把明天的煩惱寫下，收進抽屜或手機備忘","why":"「已記錄」讓大腦停止在半夜重複提醒你","points":1,"seconds":40,"script":"寫下一件…寫下第二件…收好，明天再處理"},{"id":"M01","type":"myth","stmt":"睡前飲一杯酒，可以幫助入睡","answer":false,"explain":"酒精只縮短入睡時間，卻抑制 REM、令後半夜易醒，整體睡眠質素更差。","points":1},{"id":"M02","type":"myth","stmt":"週末大睡一場，可以把睡眠債還清","answer":false,"explain":"補眠只能償還部分，週末睡到中午會造成「社交時差」，星期一更難起床。","points":1},{"id":"M03","type":"myth","stmt":"打呼代表睡得香、睡得深","answer":false,"explain":"打呼可能是睡眠窒息症的警號；若伴隨日間極度疲倦、晨起頭痛，應盡快求醫。","points":1},{"id":"M04","type":"myth","stmt":"睡前做劇烈運動，會睡得更好","answer":false,"explain":"睡前 1-2 小時的高強度運動令體溫與腎上腺素上升，反而延後入睡；日間運動才助眠。","points":1},{"id":"M05","type":"myth","stmt":"睡前滑手機只要不玩遊戲，就沒有影響","answer":false,"explain":"屏幕藍光抑制褪黑素，而內容（短片、訊息）本身亦會令大腦保持警覺，兩者同時延後入睡。","points":1},{"id":"M06","type":"myth","stmt":"每個人都必須睡滿 8 小時才算健康","answer":false,"explain":"成人建議 7-9 小時，需求有個體差異；重點是規律、日間精神與功能，而非死守 8 小時。","points":1},{"id":"M07","type":"myth","stmt":"整晚做夢，代表睡得不好","answer":false,"explain":"每晚有 4-6 個 REM 期，做夢是正常現象；記得夢境通常只反映最後一次醒來前的睡眠。","points":1},{"id":"M08","type":"myth","stmt":"睡不著，就應該一直躺在床上努力睡","answer":false,"explain":"躺床超過 20 分鐘仍清醒，應起身到昏暗處做靜態活動，待有睡意才回床（刺激控制法）。","points":1},{"id":"M09","type":"myth","stmt":"睡前飲熱牛奶是有效的助眠方法","answer":false,"explain":"牛奶的色胺酸含量有限，助眠效果被誇大；真正有用的是「固定儀式」帶來的放鬆與暗示。","points":1},{"id":"M10","type":"myth","stmt":"褪黑素是天然安眠藥，可以長期服用","answer":false,"explain":"褪黑素是調節生理時鐘的激素，並非安眠藥；對輪班／時差較有用，長期使用應諮詢醫護。","points":1},{"id":"M11","type":"myth","stmt":"習慣了睡得少，就等於身體已經適應","answer":false,"explain":"主觀適應不等於生理適應：睡眠不足仍會影響記憶、情緒、免疫與代謝，只是你「感覺不到」。","points":1},{"id":"M12","type":"myth","stmt":"睡前讀紙本書，通常比滑手機更有利入睡","answer":true,"explain":"紙本書無藍光、節奏較慢；但避免懸疑刺激或工作文件，並配合暖光閱讀。","points":1},{"id":"M13","type":"myth","stmt":"固定的睡前儀式（刷牙→調暗燈→聽輕音樂）有助入睡","answer":true,"explain":"重複的儀式成為「睡眠線索」，讓身體預先進入放鬆狀態，是行為介入的核心技巧之一。","points":1},{"id":"M14","type":"myth","stmt":"睡前 4 小時內喝咖啡，不會影響睡眠","answer":false,"explain":"咖啡因半衰期約 5-6 小時，睡前 6 小時攝取仍會減少總睡眠時間、降低睡眠效率。","points":1},{"id":"M15","type":"myth","stmt":"日間有足夠日照與活動量，晚上通常較易入睡","answer":true,"explain":"日光與活動量強化生理時鐘的日夜節律，形成「日間清醒、夜間想睡」的自然循環。","points":1},{"id":"M16","type":"myth","stmt":"寢室稍微偏涼（約 18-20°C）比偏熱更容易入睡","answer":true,"explain":"入睡需要核心體溫下降，涼爽環境有助散熱；過熱會增加夜間覺醒與淺睡。","points":1},{"id":"D01","type":"disrupt","title":"臨時加班到 23:30","effect":"本夜所有玩家 -1 分","why":"加班壓縮睡前緩衝時間，交感神經仍處於工作模式","points":1,"counter":["A02","A13"]},{"id":"D02","type":"disrupt","title":"工作群組半夜 @所有人","effect":"本夜所有玩家 -1 分","why":"通知聲引發警覺與「檢查一下」的連鎖反應","points":1,"counter":["A03","A02"]},{"id":"D03","type":"disrupt","title":"追劇追到凌晨兩點","effect":"本夜所有玩家 -1 分","why":"藍光加上劇情張力，是延後入睡的雙重打擊","points":1,"counter":["A02","A12"]},{"id":"D04","type":"disrupt","title":"宵夜與手搖飲","effect":"本夜所有玩家 -1 分","why":"高糖高咖啡因加上消化負擔，直接干擾入睡","points":1,"counter":["A06","A04"]},{"id":"D05","type":"disrupt","title":"樓上裝修與街道噪音","effect":"本夜所有玩家 -1 分","why":"突發噪音造成微覺醒，即使不記得也曾醒來","points":1,"counter":["S09","A11"]},{"id":"D06","type":"disrupt","title":"出差／旅行時差","effect":"本夜所有玩家 -1 分","why":"生理時鐘與當地時間錯位，需要主動調整","points":1,"counter":["A01","A07"]},{"id":"D07","type":"disrupt","title":"感冒鼻塞、身體不適","effect":"本夜所有玩家 -1 分","why":"呼吸不順與不適感令人易醒，睡眠碎片化","points":1,"counter":["A10","A12"]},{"id":"D08","type":"disrupt","title":"伴侶或室友打呼","effect":"本夜所有玩家 -1 分","why":"同床噪音干擾；打呼者本身亦應評估睡眠窒息風險","points":1,"counter":["S09","A01"]},{"id":"T01","type":"maintain","title":"週末守住起床時間","effect":"週末起床與平日相差不超過 1 小時","why":"避免「社交時差」，星期一不再像重新開機","points":2},{"id":"T02","type":"maintain","title":"加班夜 3 分鐘版儀式","effect":"無時間也做：關屏→調暗→4-7-8 呼吸 4 次","why":"把目標縮小到「做得到」，才不會一破功就全放棄","points":2},{"id":"T03","type":"maintain","title":"旅行睡眠計劃","effect":"抵達後按當地時間作息，白天外出曬光","why":"用光線與活動快速重設生理時鐘，減少時差影響","points":2},{"id":"T04","type":"maintain","title":"應酬飲酒策略","effect":"以水代酒、提早停酒，睡前 3 小時不飲","why":"保住深睡與 REM，隔天不用靠咖啡「還債」","points":2},{"id":"T05","type":"maintain","title":"復發不等於失敗","effect":"一晚睡差，翌日照常起床，不報復性補眠","why":"復發是行為改變的常態，回到軌道比自責重要","points":2},{"id":"T06","type":"maintain","title":"找一位睡眠隊友","effect":"與同事／朋友互相提醒打卡一週","why":"同儕支持是最能維持新習慣的力量之一","points":2}]};
+R.init(window.__CARDS__);
+fetch('/api/health').then(r=>r.json()).then(j=>{
+  if(!j || !j.ok) throw new Error('no api');
+}).catch(()=>{ document.getElementById('noServer').classList.remove('hidden'); });
+</script>
+</body>
+</html>
